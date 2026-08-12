@@ -4,9 +4,7 @@ import Card from '../components/ui/Card'
 const settingsGroups = [
   {
     heading: 'Account',
-    items: [
-      { icon: User, label: 'Profile Details', description: 'Name, age, fitness goals' },
-    ],
+    items: [{ icon: User, label: 'Profile Details', description: 'Name, age, fitness goals' }],
   },
   {
     heading: 'Preferences',
@@ -18,70 +16,66 @@ const settingsGroups = [
 ]
 
 /**
- * Profile / Settings page — Phase 1 placeholder.
+ * Profile / Settings page.
  *
- * Will eventually:
- *  - Allow users to set name, age, and fitness goals
- *  - Configure notification preferences
- *  - Manage camera / data permissions
- *  - Show app version and phase
+ * Lets users manage their identity, notification preferences, and camera /
+ * data permissions.
  */
 export default function ProfilePage() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 animate-fade-up">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Profile</h2>
-        <p className="text-slate-500 text-sm mt-0.5">Settings and preferences</p>
+        <p className="eyebrow">Account</p>
+        <h2 className="text-3xl font-bold text-ink mt-1 tracking-tight">Profile</h2>
+        <p className="text-ink-muted text-sm mt-1">Settings and preferences</p>
       </div>
 
-      {/* Avatar placeholder */}
+      {/* ── Identity card ── */}
       <Card elevated className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center shrink-0">
+        <div className="w-14 h-14 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
           <User size={26} className="text-primary" aria-hidden="true" />
         </div>
         <div>
-          <p className="font-semibold text-slate-900">Your Name</p>
-          <p className="text-xs text-slate-500 mt-0.5">Profile setup coming soon</p>
+          <p className="font-semibold text-ink">Your Name</p>
+          <p className="text-xs text-ink-muted mt-0.5">Profile setup coming soon</p>
         </div>
       </Card>
 
-      {/* Settings groups */}
+      {/* ── Settings groups ── */}
       {settingsGroups.map((group) => (
         <div key={group.heading}>
-          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-            {group.heading}
-          </h3>
-          <Card noPadding>
+          <h3 className="eyebrow mb-2">{group.heading}</h3>
+          <Card noPadding className="overflow-hidden">
             {group.items.map(({ icon: Icon, label, description }, idx) => (
-              <div
+              <button
                 key={label}
                 className={[
-                  'flex items-center justify-between px-5 py-4',
-                  idx < group.items.length - 1
-                    ? 'border-b border-slate-50'
-                    : '',
+                  'flex items-center justify-between w-full text-left px-5 py-4 transition-colors hover:bg-surface-raised',
+                  idx < group.items.length - 1 ? 'border-b border-ink-line' : '',
                 ].join(' ')}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-surface-muted flex items-center justify-center">
-                    <Icon size={16} className="text-slate-500" aria-hidden="true" />
+                  <div className="w-9 h-9 rounded-lg bg-surface-muted border border-ink-line flex items-center justify-center">
+                    <Icon size={16} className="text-ink-muted" aria-hidden="true" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{label}</p>
-                    <p className="text-xs text-slate-400">{description}</p>
+                    <p className="text-sm font-medium text-ink">{label}</p>
+                    <p className="text-xs text-ink-faint">{description}</p>
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-slate-300" aria-hidden="true" />
-              </div>
+                <ChevronRight size={16} className="text-ink-faint" aria-hidden="true" />
+              </button>
             ))}
           </Card>
         </div>
       ))}
 
-      {/* App info */}
-      <Card className="text-center bg-surface-muted border border-dashed border-slate-200">
-        <p className="text-xs text-slate-400">FitCoach AI · Phase 1 — Foundation</p>
-        <p className="text-xs text-slate-300 mt-0.5">v0.1.0</p>
+      {/* ── App info ── */}
+      <Card className="text-center bg-surface-muted">
+        <p className="font-mono text-[11px] text-ink-faint uppercase tracking-wide">
+          FitCoach AI · Performance Console
+        </p>
+        <p className="font-mono text-[11px] text-ink-faint mt-0.5">v0.1.0</p>
       </Card>
     </div>
   )

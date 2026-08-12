@@ -10,50 +10,47 @@ const navItems = [
 
 /**
  * Fixed bottom navigation bar — visible on mobile, hidden on md+ screens.
- * Active route is highlighted with the primary green colour.
+ * Active route is highlighted with the electric-lime primary colour.
  */
 export default function BottomNav() {
   return (
     <nav
       className={[
         'fixed bottom-0 left-0 right-0 z-50',
-        'bg-surface border-t border-slate-100',
+        'bg-background/90 backdrop-blur-md border-t border-ink-line',
         'nav-safe-bottom',
-        // Hidden on desktop — desktop uses sidebar/header nav (future)
         'md:hidden',
       ].join(' ')}
       aria-label="Main navigation"
     >
-      <ul className="flex items-stretch">
+      <ul className="flex items-stretch max-w-screen-lg mx-auto">
         {navItems.map(({ to, label, icon: Icon }) => (
           <li key={to} className="flex-1">
             <NavLink
               to={to}
-              end={to === '/'} // exact match for root only
+              end={to === '/'}
               className={({ isActive }) =>
                 [
-                  'flex flex-col items-center justify-center gap-0.5',
-                  'py-2 min-h-[56px] w-full',
-                  'text-xs font-medium transition-colors duration-150',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-slate-400 hover:text-slate-600',
+                  'relative flex flex-col items-center justify-center gap-1',
+                  'py-2.5 min-h-[60px] w-full',
+                  'text-[11px] font-medium transition-colors duration-150',
+                  isActive ? 'text-primary' : 'text-ink-faint hover:text-ink-muted',
                 ].join(' ')
               }
               aria-label={label}
             >
               {({ isActive }) => (
                 <>
+                  {/* Active top indicator bar */}
+                  {isActive && (
+                    <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary shadow-[0_0_10px_0_rgb(182_243_74_/_0.8)]" />
+                  )}
                   <Icon
-                    size={22}
+                    size={21}
                     strokeWidth={isActive ? 2.5 : 1.8}
                     aria-hidden="true"
                   />
                   <span>{label}</span>
-                  {/* Active indicator dot */}
-                  {isActive && (
-                    <span className="absolute bottom-1 w-1 h-1 rounded-full bg-primary" />
-                  )}
                 </>
               )}
             </NavLink>

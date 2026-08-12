@@ -39,11 +39,11 @@ export const POSE_CONNECTIONS: [number, number][] = [
 
 // ── Drawing style constants ───────────────────────────────────────────────────
 const LANDMARK_RADIUS = 5
-const LANDMARK_COLOR = '#16a34a'        // primary green — matches design system
-const LANDMARK_BORDER_COLOR = '#ffffff'
+const LANDMARK_COLOR = '#b6f34a'        // electric lime — matches design system
+const LANDMARK_BORDER_COLOR = '#0e1116' // charcoal background for contrast
 const LANDMARK_BORDER_WIDTH = 1.5
 
-const CONNECTION_COLOR = 'rgba(22, 163, 74, 0.75)' // semi-transparent green
+const CONNECTION_COLOR = 'rgba(182, 243, 74, 0.8)' // semi-transparent lime
 const CONNECTION_WIDTH = 2.5
 
 /** Minimum visibility score to render a landmark/connection. */

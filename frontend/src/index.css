@@ -5,37 +5,52 @@
 /* ── Base styles ────────────────────────────────────────────── */
 @layer base {
   html {
-    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: theme('colors.background');
   }
 
   body {
-    @apply bg-background text-slate-900;
-    /* Prevent iOS tap highlight */
+    @apply bg-background text-ink;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Smooth scrolling everywhere */
   * {
     scroll-behavior: smooth;
+  }
+
+  /* Numeric telemetry uses tabular mono figures so digits don't jitter */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
   }
 }
 
 /* ── Component utilities ─────────────────────────────────────── */
 @layer components {
-  /* Standard page padding */
   .page-padding {
     @apply px-4 py-6;
   }
 
-  /* Card base — used as starting point for Card component */
   .card-base {
     @apply bg-surface rounded-card shadow-card p-5;
   }
 
-  /* Bottom nav safe area clearance on iOS */
   .nav-safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Section label — small uppercase mono eyebrow used across pages */
+  .eyebrow {
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted;
+  }
+
+  /* Subtle technical grid backdrop for hero surfaces */
+  .grid-backdrop {
+    background-image:
+      linear-gradient(theme('colors.ink.line') 1px, transparent 1px),
+      linear-gradient(90deg, theme('colors.ink.line') 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 }

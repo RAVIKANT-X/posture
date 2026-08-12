@@ -44,7 +44,7 @@ export default function CameraView({
      * and switches to 16:9 on wider screens. `overflow-hidden` clips the
      * mirrored video correctly.
      */
-    <div className="relative w-full aspect-[3/4] sm:aspect-video rounded-card overflow-hidden bg-slate-900">
+    <div className="relative w-full aspect-[3/4] sm:aspect-video rounded-card overflow-hidden bg-surface-muted border border-ink-line">
 
       {/* ── Live video element ─────────────────────────────────────────── */}
       <video

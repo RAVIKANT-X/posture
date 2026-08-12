@@ -8,7 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Reusable surface card.
+ * Reusable surface card — a charcoal instrument panel with a hairline border.
  *
  * Used for:
  *  - Exercise info
@@ -29,7 +29,7 @@ export default function Card({
     <div
       {...props}
       className={[
-        'bg-surface rounded-card',
+        'bg-surface rounded-card border border-ink-line',
         elevated ? 'shadow-card-md' : 'shadow-card',
         noPadding ? '' : 'p-5',
         className,

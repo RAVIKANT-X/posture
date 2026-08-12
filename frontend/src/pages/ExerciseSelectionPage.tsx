@@ -1,16 +1,13 @@
 /**
- * ExerciseSelectionPage — Phase 3.
+ * ExerciseSelectionPage.
  *
  * Displays the exercise library. When the user taps an exercise:
  *  1. The exercise is stored in ExerciseContext (useSelectedExercise).
- *  2. The user is navigated to /workout.
- *
- * Phase 3 scope: exercise selection + navigation only.
- * Angle calculations and form analysis → Phase 4.
+ *  2. The user can start the session, navigating to /workout.
  */
 
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+import { Check } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { EXERCISE_LIBRARY } from '../features/exercise/exerciseLibrary'
@@ -61,11 +58,12 @@ const exerciseIcons: Record<string, () => JSX.Element> = {
 
 interface ExerciseCardProps {
   exercise: ExerciseDefinition
+  index: number
   isSelected: boolean
   onSelect: (exercise: ExerciseDefinition) => void
 }
 
-function ExerciseCard({ exercise, isSelected, onSelect }: ExerciseCardProps) {
+function ExerciseCard({ exercise, index, isSelected, onSelect }: ExerciseCardProps) {
   const Icon = exerciseIcons[exercise.id] ?? SquatIcon
 
   return (
@@ -74,8 +72,8 @@ function ExerciseCard({ exercise, isSelected, onSelect }: ExerciseCardProps) {
       className={[
         'cursor-pointer transition-all duration-150',
         isSelected
-          ? 'ring-2 ring-primary border-transparent'
-          : 'hover:shadow-card-md',
+          ? 'border-primary/70 shadow-glow'
+          : 'hover:border-ink-muted/40',
       ].join(' ')}
       onClick={() => onSelect(exercise)}
       role="button"
@@ -85,28 +83,35 @@ function ExerciseCard({ exercise, isSelected, onSelect }: ExerciseCardProps) {
         if (e.key === 'Enter' || e.key === ' ') onSelect(exercise)
       }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-4 min-w-0">
           {/* Icon badge */}
           <div
             className={[
-              'w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors',
-              isSelected ? 'bg-primary text-white' : 'bg-primary-light text-primary',
+              'w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors',
+              isSelected
+                ? 'bg-primary text-background'
+                : 'bg-surface-muted text-primary border border-ink-line',
             ].join(' ')}
           >
             <Icon />
           </div>
 
           {/* Text */}
-          <div>
-            <p className="font-semibold text-slate-900">{exercise.name}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{exercise.description}</p>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[10px] text-ink-faint">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <p className="font-semibold text-ink truncate">{exercise.name}</p>
+            </div>
+            <p className="text-xs text-ink-muted mt-0.5 line-clamp-2">{exercise.description}</p>
             {/* Muscle groups */}
-            <div className="flex flex-wrap gap-1 mt-1.5">
+            <div className="flex flex-wrap gap-1 mt-2">
               {exercise.muscleGroups.slice(0, 3).map((m) => (
                 <span
                   key={m}
-                  className="text-[10px] bg-surface-muted text-slate-500 px-1.5 py-0.5 rounded-full"
+                  className="text-[10px] font-mono uppercase tracking-wide bg-surface-muted text-ink-muted border border-ink-line px-1.5 py-0.5 rounded"
                 >
                   {m}
                 </span>
@@ -116,17 +121,17 @@ function ExerciseCard({ exercise, isSelected, onSelect }: ExerciseCardProps) {
         </div>
 
         {/* Selection indicator */}
-        <div className="shrink-0 ml-3">
-          {isSelected ? (
-            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-              <svg viewBox="0 0 12 12" fill="white" className="w-3 h-3" aria-hidden="true">
-                <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" fill="none"
-                  strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          ) : (
-            <ChevronRight size={16} className="text-slate-300" aria-hidden="true" />
-          )}
+        <div className="shrink-0">
+          <div
+            className={[
+              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
+              isSelected
+                ? 'bg-primary text-background'
+                : 'border border-ink-line text-transparent',
+            ].join(' ')}
+          >
+            <Check size={14} strokeWidth={3} aria-hidden="true" />
+          </div>
         </div>
       </div>
     </Card>
@@ -150,46 +155,48 @@ export default function ExerciseSelectionPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 animate-fade-up">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Choose an Exercise</h2>
-        <p className="text-slate-500 text-sm mt-0.5">
-          Select an exercise to begin your session
+        <p className="eyebrow">Exercise library</p>
+        <h2 className="text-3xl font-bold text-ink mt-1 tracking-tight">Choose a movement</h2>
+        <p className="text-ink-muted text-sm mt-1">
+          Pick an exercise to arm the pose engine for the right joints.
         </p>
       </div>
 
       {/* ── Exercise cards ───────────────────────────────────────────────── */}
       <div className="space-y-3">
-        {EXERCISE_LIBRARY.map((exercise) => (
+        {EXERCISE_LIBRARY.map((exercise, index) => (
           <ExerciseCard
             key={exercise.id}
             exercise={exercise}
+            index={index}
             isSelected={selectedExercise?.id === exercise.id}
             onSelect={handleSelect}
           />
         ))}
       </div>
 
-      {/* ── Angle info (Phase 3 detail) ──────────────────────────────────── */}
+      {/* ── Tracked angles detail ────────────────────────────────────────── */}
       {selectedExercise && (
         <Card className="bg-surface-muted">
-          <p className="text-xs font-semibold text-slate-600 mb-2">
-            Tracked angles — {selectedExercise.name}
-          </p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="eyebrow">Tracked angles · {selectedExercise.name}</p>
+            <span className="font-mono text-[10px] text-primary">
+              {selectedExercise.requiredLandmarks.length} landmarks
+            </span>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {selectedExercise.primaryAngles.map((a) => (
               <span
                 key={a.name}
-                className="text-xs bg-primary-light text-primary-dark px-2 py-0.5 rounded-full font-medium"
+                className="text-xs font-mono bg-primary/10 text-primary border border-primary/30 px-2 py-0.5 rounded"
               >
                 {a.name}
               </span>
             ))}
           </div>
-          <p className="text-[10px] text-slate-400 mt-2">
-            {selectedExercise.requiredLandmarks.length} landmarks required for analysis
-          </p>
         </Card>
       )}
 
@@ -197,20 +204,12 @@ export default function ExerciseSelectionPage() {
       <Button
         variant="primary"
         fullWidth
+        size="lg"
         disabled={!selectedExercise}
         onClick={handleStart}
       >
-        {selectedExercise
-          ? `Start ${selectedExercise.name}`
-          : 'Select an exercise above'}
+        {selectedExercise ? `Start ${selectedExercise.name}` : 'Select an exercise above'}
       </Button>
-
-      {/* ── Phase notice ─────────────────────────────────────────────────── */}
-      <Card className="border border-dashed border-slate-200 bg-surface-muted">
-        <p className="text-xs text-slate-400 text-center leading-relaxed">
-          Phase 3 — Biomechanics. Form analysis and rep counting arrive in Phase 4.
-        </p>
-      </Card>
     </div>
   )
 }

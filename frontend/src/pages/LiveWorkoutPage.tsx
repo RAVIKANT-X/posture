@@ -1,19 +1,11 @@
 /**
- * LiveWorkoutPage — Phase 3.
- *
- * Extends Phase 2 with exercise context awareness:
- *  - Reads selectedExercise from ExerciseContext
- *  - Displays the active exercise name and its tracked angles
- *  - Passes landmark data to calculateExerciseAngles (Phase 3)
- *  - Displays live angle values in the UI (read-only — no form rules yet)
- *
- * Phase 4 will use these angle values to detect reps and form deviations.
+ * LiveWorkoutPage.
  *
  *   LiveWorkoutPage
  *     ├── useCamera              (camera stream + state)
  *     ├── usePoseLandmarker      (MediaPipe inference loop)
  *     ├── useSelectedExercise    (exercise from ExerciseContext)
- *     ├── calculateExerciseAngles (biomechanics — Phase 3)
+ *     ├── calculateExerciseAngles (biomechanics)
  *     ├── CameraView             (<video> + states)
  *     │     └── PoseOverlay      (<canvas> skeleton)
  *     └── Controls + AngleDisplay
@@ -39,10 +31,6 @@ export default function LiveWorkoutPage() {
   const { modelStatus, poses, startLoop, stopLoop } = usePoseLandmarker()
   const canvasRef = useRef<HTMLCanvasElement>(null!)
 
-  /**
-   * When the user navigates away from this page while the camera is running,
-   * stop the camera and inference loop to free the device camera resource.
-   */
   useEffect(() => {
     return () => {
       stop()
@@ -58,43 +46,31 @@ export default function LiveWorkoutPage() {
   }
 
   // ── Compute live angles whenever a new pose arrives ─────────────────────
-  // Uses world landmarks for 3D angle accuracy (Phase 3).
-  // No form thresholds are applied here — that is Phase 4's responsibility.
   let liveAngles: JointAngles = {}
-  if (
-    selectedExercise &&
-    poses.length > 0 &&
-    poses[0].worldLandmarks.length > 0
-  ) {
-    liveAngles = calculateExerciseAngles(
-      selectedExercise.primaryAngles,
-      poses[0].worldLandmarks,
-    )
+  if (selectedExercise && poses.length > 0 && poses[0].worldLandmarks.length > 0) {
+    liveAngles = calculateExerciseAngles(selectedExercise.primaryAngles, poses[0].worldLandmarks)
   }
 
   const personVisible = poses.length > 0 && poses[0].landmarks.length > 0
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-up">
       {/* ── Page header ──────────────────────────────────────────────────── */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          {/* Back to exercise selection if no exercise chosen */}
           {!selectedExercise && (
             <button
               onClick={() => navigate('/exercises')}
-              className="flex items-center gap-1 text-xs text-primary mb-1"
+              className="flex items-center gap-1 text-xs text-primary mb-1.5 hover:text-primary-light transition-colors"
             >
               <ArrowLeft size={12} />
               Choose exercise
             </button>
           )}
-          <h2 className="text-2xl font-bold text-slate-900">
+          <p className="eyebrow">{selectedExercise ? 'Live session' : 'Live workout'}</p>
+          <h2 className="text-3xl font-bold text-ink mt-1 tracking-tight">
             {selectedExercise ? selectedExercise.name : 'Live Workout'}
           </h2>
-          <p className="text-slate-500 text-sm mt-0.5">
-            {selectedExercise ? selectedExercise.description : 'Real-time pose detection'}
-          </p>
         </div>
         <ModelStatusBadge status={modelStatus} />
       </div>
@@ -116,43 +92,55 @@ export default function LiveWorkoutPage() {
       {isActive && (
         <Card className="py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className={['w-2 h-2 rounded-full', personVisible ? 'bg-success animate-pulse' : 'bg-slate-300'].join(' ')} />
-            <span className="text-sm text-slate-600">
-              {personVisible ? `${poses[0].landmarks.length} landmarks detected` : 'Waiting for person…'}
+            <span
+              className={[
+                'w-2 h-2 rounded-full',
+                personVisible ? 'bg-primary animate-pulse' : 'bg-ink-faint',
+              ].join(' ')}
+            />
+            <span className="font-mono text-xs text-ink-muted">
+              {personVisible
+                ? `${poses[0].landmarks.length} LANDMARKS TRACKED`
+                : 'WAITING FOR PERSON…'}
             </span>
           </div>
-          <span className="text-xs text-slate-400 uppercase tracking-wide">
+          <span className="font-mono text-[10px] text-ink-faint uppercase tracking-wide">
             {facing === 'user' ? 'Front cam' : 'Rear cam'}
           </span>
         </Card>
       )}
 
-      {/* ── Live angle readout (Phase 3) ─────────────────────────────────── */}
+      {/* ── Live angle readout ───────────────────────────────────────────── */}
       {isActive && selectedExercise && personVisible && Object.keys(liveAngles).length > 0 && (
         <Card>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-            Live Joint Angles
-          </p>
+          <p className="eyebrow mb-3">Live Joint Angles</p>
           <div className="grid grid-cols-2 gap-2">
             {Object.values(liveAngles).map((result) => (
-              <div key={result.name} className="bg-surface-muted rounded-lg px-3 py-2">
-                <p className="text-[10px] text-slate-400 truncate">{result.name}</p>
-                <p className={['text-lg font-bold', result.valid ? 'text-slate-900' : 'text-slate-300'].join(' ')}>
+              <div
+                key={result.name}
+                className="bg-surface-muted border border-ink-line rounded-lg px-3 py-2.5"
+              >
+                <p className="font-mono text-[10px] text-ink-faint truncate uppercase tracking-wide">
+                  {result.name}
+                </p>
+                <p
+                  className={[
+                    'font-mono text-2xl font-bold tabular mt-0.5',
+                    result.valid ? 'text-primary' : 'text-ink-faint',
+                  ].join(' ')}
+                >
                   {result.valid ? `${result.degrees.toFixed(1)}°` : '—'}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-slate-400 mt-2">
-            Phase 3 — display only. Form analysis and rep counting arrive in Phase 4.
-          </p>
         </Card>
       )}
 
       {/* ── Camera controls ───────────────────────────────────────────────── */}
       <div className="flex gap-3">
         {!isActive ? (
-          <Button variant="primary" fullWidth onClick={handleStart} disabled={status === 'requesting'}>
+          <Button variant="primary" fullWidth size="lg" onClick={handleStart} disabled={status === 'requesting'}>
             <Camera size={18} aria-hidden="true" />
             {status === 'requesting' ? 'Starting…' : 'Enable Camera'}
           </Button>
@@ -162,9 +150,14 @@ export default function LiveWorkoutPage() {
               <CameraOff size={18} aria-hidden="true" />
               Stop Camera
             </Button>
-            <Button variant="secondary" size="md" onClick={switchCamera}
-              aria-label="Switch camera" title="Switch between front and rear camera"
-              className="shrink-0 px-4">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={switchCamera}
+              aria-label="Switch camera"
+              title="Switch between front and rear camera"
+              className="shrink-0 px-4"
+            >
               <FlipHorizontal size={18} aria-hidden="true" />
             </Button>
           </>
@@ -173,10 +166,11 @@ export default function LiveWorkoutPage() {
 
       {/* ── No exercise selected warning ─────────────────────────────────── */}
       {!selectedExercise && (
-        <Card className="border border-dashed border-slate-200 bg-surface-muted">
-          <p className="text-xs text-slate-400 text-center leading-relaxed">
+        <Card className="bg-surface-muted flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-warning shrink-0" aria-hidden="true" />
+          <p className="text-xs text-ink-muted leading-relaxed">
             No exercise selected.{' '}
-            <button onClick={() => navigate('/exercises')} className="text-primary underline">
+            <button onClick={() => navigate('/exercises')} className="text-primary underline underline-offset-2">
               Choose one
             </button>{' '}
             to see live angle measurements.
@@ -193,17 +187,17 @@ type ModelStatus = 'uninitialized' | 'loading' | 'ready' | 'error'
 
 function ModelStatusBadge({ status }: { status: ModelStatus }) {
   const config: Record<ModelStatus, { label: string; dot: string }> = {
-    uninitialized: { label: 'Pose model', dot: 'bg-slate-300' },
-    loading: { label: 'Loading model…', dot: 'bg-warning animate-pulse' },
-    ready: { label: 'Model ready', dot: 'bg-success' },
+    uninitialized: { label: 'Pose model', dot: 'bg-ink-faint' },
+    loading: { label: 'Loading…', dot: 'bg-warning animate-pulse' },
+    ready: { label: 'Model ready', dot: 'bg-primary' },
     error: { label: 'Model error', dot: 'bg-error' },
   }
   const { label, dot } = config[status]
 
   return (
-    <div className="flex items-center gap-1.5 bg-surface-muted rounded-full px-3 py-1">
+    <div className="flex items-center gap-1.5 bg-surface border border-ink-line rounded-full px-3 py-1.5 shrink-0">
       <span className={`w-2 h-2 rounded-full ${dot}`} />
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="font-mono text-[10px] text-ink-muted uppercase tracking-wide">{label}</span>
     </div>
   )
 }
