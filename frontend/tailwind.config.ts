@@ -1,55 +1,55 @@
 import type { Config } from 'tailwindcss'
 
 /**
- * FitCoach AI — "Performance Training Console" theme.
+ * FitCoach — "Health Companion" theme.
  *
- * Aesthetic: dark charcoal instrument-panel surfaces, an electric-lime
- * signature accent that means "active / good form", and load-bearing
- * semantic colors (amber = caution, red = deviation). Numeric telemetry
- * (angles, reps, scores) is rendered in JetBrains Mono; all other UI in
- * Space Grotesk.
+ * Aesthetic: soft sage-green gradient canvas, frosted-glass cards with
+ * generous rounding, a calm sage-green accent for progress/metrics, and a
+ * near-black "ink" used for primary CTAs and active controls. Headings and
+ * body use Plus Jakarta Sans; precise numeric telemetry (joint angles) uses
+ * JetBrains Mono.
  */
 const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // ── Signature accent (electric lime — active / good form / progress) ──
+        // ── Sage-green accent (progress, metrics, active tints) ──
         primary: {
-          DEFAULT: '#b6f34a',
-          dark: '#8fd422',
-          light: '#d6fb87',
+          DEFAULT: '#5f9c67',
+          dark: '#47814f',
+          light: '#dcebd6',
         },
-        // ── Charcoal instrument-panel surfaces ──
-        background: '#0e1116', // deep charcoal page background
+        // ── Light gradient canvas + frosted surfaces ──
+        background: '#e4efdf', // base page tint (gradient applied in CSS)
         surface: {
-          DEFAULT: '#181d25', // card background
-          muted: '#11151b',   // recessed / inset panels
-          raised: '#212832',  // hovered / elevated elements
+          DEFAULT: '#ffffff', // solid white (glass handled via .glass utility)
+          muted: '#eef4ec',   // recessed / inset panels
+          raised: '#f5faf3',  // hovered / elevated elements
         },
-        // ── Neutral ink scale (text + hairlines on dark) ──
+        // ── Near-black green-tinted ink (text + primary CTA + active nav) ──
         ink: {
-          DEFAULT: '#e8ecf1', // primary text
-          muted: '#94a1b2',   // secondary text
-          faint: '#5c6672',   // tertiary text / disabled
-          line: '#262d38',    // hairline borders
+          DEFAULT: '#1f2a24', // primary text / CTA fill
+          muted: '#5c6b60',   // secondary text
+          faint: '#8a978d',   // tertiary text / disabled
+          line: '#d8e4d4',    // hairline borders
         },
-        // ── Semantic status (load-bearing form-quality signals) ──
-        success: '#7bd938',
-        warning: '#f5a524',
-        error: '#ff5d5d',
+        // ── Semantic status ──
+        success: '#4a9e57',
+        warning: '#e0913a',
+        error: '#e0574f',
       },
       fontFamily: {
-        sans: ['"Space Grotesk"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       borderRadius: {
-        card: '1.125rem',
+        card: '1.75rem', // 28px — soft, pill-adjacent rounding
       },
       boxShadow: {
-        card: '0 1px 2px 0 rgb(0 0 0 / 0.4)',
-        'card-md': '0 8px 24px -6px rgb(0 0 0 / 0.55)',
-        glow: '0 0 0 1px rgb(182 243 74 / 0.35), 0 0 28px -6px rgb(182 243 74 / 0.45)',
+        card: '0 6px 24px -12px rgb(47 82 55 / 0.28)',
+        'card-md': '0 18px 44px -16px rgb(47 82 55 / 0.32)',
+        glow: '0 0 0 1px rgb(95 156 103 / 0.4), 0 10px 30px -10px rgb(95 156 103 / 0.4)',
       },
       keyframes: {
         'fade-up': {
@@ -57,9 +57,9 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         'pulse-ring': {
-          '0%': { boxShadow: '0 0 0 0 rgb(182 243 74 / 0.5)' },
-          '70%': { boxShadow: '0 0 0 10px rgb(182 243 74 / 0)' },
-          '100%': { boxShadow: '0 0 0 0 rgb(182 243 74 / 0)' },
+          '0%': { boxShadow: '0 0 0 0 rgb(95 156 103 / 0.5)' },
+          '70%': { boxShadow: '0 0 0 10px rgb(95 156 103 / 0)' },
+          '100%': { boxShadow: '0 0 0 0 rgb(95 156 103 / 0)' },
         },
       },
       animation: {

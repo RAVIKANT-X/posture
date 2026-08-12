@@ -5,22 +5,28 @@
 /* ── Base styles ────────────────────────────────────────────── */
 @layer base {
   html {
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: theme('colors.background');
   }
 
   body {
-    @apply bg-background text-ink;
+    @apply text-ink;
     -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    /* Soft sage-green health canvas */
+    background:
+      radial-gradient(120% 80% at 100% 0%, #f2f8ef 0%, rgba(242, 248, 239, 0) 55%),
+      linear-gradient(158deg, #eaf3e6 0%, #d8e8d2 55%, #cfe3c9 100%);
+    background-attachment: fixed;
   }
 
   * {
     scroll-behavior: smooth;
   }
 
-  /* Numeric telemetry uses tabular mono figures so digits don't jitter */
+  /* Numeric telemetry uses tabular figures so digits don't jitter */
   .tabular {
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum';
@@ -33,24 +39,31 @@
     @apply px-4 py-6;
   }
 
+  /* Frosted-glass surface — the signature card treatment */
+  .glass {
+    background-color: rgb(255 255 255 / 0.68);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgb(255 255 255 / 0.7);
+  }
+
+  .glass-strong {
+    background-color: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgb(255 255 255 / 0.8);
+  }
+
   .card-base {
-    @apply bg-surface rounded-card shadow-card p-5;
+    @apply glass rounded-card shadow-card p-5;
   }
 
   .nav-safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Section label — small uppercase mono eyebrow used across pages */
+  /* Section label — small uppercase eyebrow used across pages */
   .eyebrow {
-    @apply font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted;
-  }
-
-  /* Subtle technical grid backdrop for hero surfaces */
-  .grid-backdrop {
-    background-image:
-      linear-gradient(theme('colors.ink.line') 1px, transparent 1px),
-      linear-gradient(90deg, theme('colors.ink.line') 1px, transparent 1px);
-    background-size: 28px 28px;
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-dark;
   }
 }

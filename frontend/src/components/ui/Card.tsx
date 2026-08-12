@@ -1,14 +1,14 @@
 import { type HTMLAttributes } from 'react'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  /** Adds a slightly elevated shadow — useful for featured/hero cards */
+  /** Adds a stronger elevated shadow — useful for featured/hero cards */
   elevated?: boolean
   /** Removes default padding — useful when building custom card layouts */
   noPadding?: boolean
 }
 
 /**
- * Reusable surface card — a charcoal instrument panel with a hairline border.
+ * Reusable surface card — a frosted-glass panel with generous rounding.
  *
  * Used for:
  *  - Exercise info
@@ -29,7 +29,7 @@ export default function Card({
     <div
       {...props}
       className={[
-        'bg-surface rounded-card border border-ink-line',
+        'glass rounded-card',
         elevated ? 'shadow-card-md' : 'shadow-card',
         noPadding ? '' : 'p-5',
         className,

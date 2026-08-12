@@ -9,49 +9,35 @@ const navItems = [
 ] as const
 
 /**
- * Fixed bottom navigation bar — visible on mobile, hidden on md+ screens.
- * Active route is highlighted with the electric-lime primary colour.
+ * Floating pill navigation — a frosted-glass bar that hovers above content.
+ * The active route is marked with a solid near-black "ink" circle, echoing
+ * the health-companion reference design.
  */
 export default function BottomNav() {
   return (
     <nav
-      className={[
-        'fixed bottom-0 left-0 right-0 z-50',
-        'bg-background/90 backdrop-blur-md border-t border-ink-line',
-        'nav-safe-bottom',
-        'md:hidden',
-      ].join(' ')}
+      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 nav-safe-bottom"
       aria-label="Main navigation"
     >
-      <ul className="flex items-stretch max-w-screen-lg mx-auto">
+      <ul className="glass-strong flex items-center gap-1 rounded-full p-2 shadow-card-md">
         {navItems.map(({ to, label, icon: Icon }) => (
-          <li key={to} className="flex-1">
+          <li key={to}>
             <NavLink
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
                 [
-                  'relative flex flex-col items-center justify-center gap-1',
-                  'py-2.5 min-h-[60px] w-full',
-                  'text-[11px] font-medium transition-colors duration-150',
-                  isActive ? 'text-primary' : 'text-ink-faint hover:text-ink-muted',
+                  'relative flex items-center justify-center rounded-full transition-all duration-200',
+                  'w-12 h-12',
+                  isActive
+                    ? 'bg-ink text-white shadow-[0_8px_18px_-6px_rgb(31_42_36_/_0.7)]'
+                    : 'text-ink-muted hover:text-ink hover:bg-white/60',
                 ].join(' ')
               }
               aria-label={label}
             >
               {({ isActive }) => (
-                <>
-                  {/* Active top indicator bar */}
-                  {isActive && (
-                    <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary shadow-[0_0_10px_0_rgb(182_243_74_/_0.8)]" />
-                  )}
-                  <Icon
-                    size={21}
-                    strokeWidth={isActive ? 2.5 : 1.8}
-                    aria-hidden="true"
-                  />
-                  <span>{label}</span>
-                </>
+                <Icon size={20} strokeWidth={isActive ? 2.4 : 1.9} aria-hidden="true" />
               )}
             </NavLink>
           </li>
